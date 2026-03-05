@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Advanced Typing Test</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+padding:40px;
+}
+
+#paragraph{
+width:80%;
+margin:auto;
+background:#1e293b;
+padding:25px;
+border-radius:10px;
+font-size:20px;
+line-height:1.8;
+text-align:left;
+user-select:none;
+
+height:110px;
+overflow:hidden;
+}
+
+.word{
+padding:3px 5px;
+border-radius:4px;
+}
+
+.correct{
+color:#22c55e;
+background:rgba(34,197,94,0.2);
+}
+
+.wrong{
+color:#ef4444;
+background:rgba(239,68,68,0.2);
+}
+
+.active{
+text-decoration:underline;
+}
+
+#typingBox{
+width:80%;
+height:120px;
+font-size:20px;
+margin-top:20px;
+}
+
+button{
+padding:10px 30px;
+font-size:18px;
+cursor:pointer;
+}
+
+#stats{
+margin-top:20px;
+font-size:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Technical Typing Challenge</h1>
+
+<div id="paragraph"></div>
+
+<br>
+
+<button onclick="startTest()">Start Test</button>
+
+<h3 id="timer">Time Left: 600</h3>
+
+<textarea id="typingBox" disabled></textarea>
+
+<div id="stats"></div>
+
+<script>
+
+const paragraphText = `In 2027 software engineers across the world started developing ultraAdvancedArtificialIntelligencePlatforms capable of processing billionsOfOperationsPerSecond.`
+
+const paragraphDiv=document.getElementById("paragraph")
+const typingBox=document.getElementById("typingBox")
+const statsDiv=document.getElementById("stats")
+const timerDisplay=document.getElementById("timer")
+
+let words=paragraphText.split(/\s+/)
+
+let currentIndex=0
+let correct=0
+let wrong=0
+let timeLeft=600
+let timer
+
+let wordStatus=[]   // NEW (store correct/wrong)
+
+function loadParagraph(){
+
+paragraphDiv.innerHTML=""
+
+let start=Math.max(0,currentIndex-5)
+let end=Math.min(words.length,currentIndex+15)
+
+for(let i=start;i<end;i++){
+
+let span=document.createElement("span")
+span.innerText=words[i]+" "
+span.classList.add("word")
+
+// apply stored status
+if(wordStatus[i]==="correct"){
+span.classList.add("correct")
+}
+
+if(wordStatus[i]==="wrong"){
+span.classList.add("wrong")
+}
+
+if(i===currentIndex){
+span.classList.add("active")
+}
+
+paragraphDiv.appendChild(span)
+
+}
+
+}
+
+function startTest(){
+
+typingBox.disabled=false
+typingBox.value=""
+typingBox.focus()
+
+currentIndex=0
+correct=0
+wrong=0
+timeLeft=600
+wordStatus=[]   // reset status
+
+loadParagraph()
+
+timerDisplay.innerText="Time Left: "+timeLeft
+
+timer=setInterval(()=>{
+
+timeLeft--
+
+timerDisplay.innerText="Time Left: "+timeLeft
+
+if(timeLeft===0){
+
+clearInterval(timer)
+finish()
+
+}
+
+},1000)
+
+}
+
+typingBox.addEventListener("keydown",(e)=>{
+
+if(e.key==="Backspace"){
+e.preventDefault()
+}
+
+if(e.ctrlKey && e.key==="v"){
+e.preventDefault()
+}
+
+})
+
+typingBox.addEventListener("keyup",(e)=>{
+
+let typed=typingBox.value.trim()
+let currentWord=words[currentIndex]
+
+let spans=paragraphDiv.querySelectorAll(".word")
+
+// realtime wrong check
+if(!currentWord.startsWith(typed)){
+spans[currentIndex].classList.add("wrong")
+}
+
+// when space pressed
+if(e.key===" "){
+
+if(typed===currentWord){
+
+correct++
+wordStatus[currentIndex]="correct"
+
+}else{
+
+wrong++
+wordStatus[currentIndex]="wrong"
+
+}
+
+currentIndex++
+
+loadParagraph()
+
+typingBox.value=""
+
+updateStats()
+
+}
+
+})
+
+function updateStats(){
+
+let total=correct+wrong
+
+let accuracy= total>0 ? ((correct/total)*100).toFixed(2) : 0
+
+let minutes=(600-timeLeft)/60
+
+let wpm= minutes>0 ? Math.round(correct/minutes) : 0
+
+statsDiv.innerHTML=`
+
+Total Words : ${total} <br>
+Correct Words : ${correct} <br>
+Wrong Words : ${wrong} <br>
+Accuracy : ${accuracy}% <br>
+WPM : ${wpm}
+
+`
+
+}
+
+function finish(){
+
+typingBox.disabled=true
+alert("Typing Test Finished")
+
+}
+
+</script>
+
+</body>
+</html>
