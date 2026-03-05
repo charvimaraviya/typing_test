@@ -24,8 +24,8 @@ line-height:1.8;
 text-align:left;
 user-select:none;
 
-height:110px;
-overflow:hidden;
+height:250px;
+overflow:auto;
 }
 
 .word{
@@ -79,7 +79,7 @@ font-size:20px;
 
 <button onclick="startTest()">Start Test</button>
 
-<h3 id="timer">Time Left: 600</h3>
+<h3 id="timer">Time Left: 300</h3>
 
 <textarea id="typingBox" disabled></textarea>
 
@@ -91,7 +91,7 @@ const paragraphText = `In 2027 software engineers started building advancedArtif
 Developers created complex systems like neuralNetworkProcessingEngine and adaptiveDecisionMakingCore to improve performance. 
 During testing the monitoring server generated alerts such as CRITICAL_CPU_USAGE_WARNING and SYSTEM_MEMORY_LIMIT_EXCEEDED. 
 The engineering team quickly executed emergencyRecoveryProtocol and restored the infrastructure stability. 
-Finally the console displayed SUCCESS_STATUS_CODE_200_OK and the project was deployed successfully.`
+Finally the console displayed SUCCESS_STATUS_CODE_200_OK .`
 
 const paragraphDiv=document.getElementById("paragraph")
 const typingBox=document.getElementById("typingBox")
@@ -103,7 +103,7 @@ let words=paragraphText.split(/\s+/)
 let currentIndex=0
 let correct=0
 let wrong=0
-let timeLeft=600
+let timeLeft=300
 let timer
 
 let wordStatus=[]   // NEW (store correct/wrong)
@@ -112,8 +112,8 @@ function loadParagraph(){
 
 paragraphDiv.innerHTML=""
 
-let start=Math.max(0,currentIndex-5)
-let end=Math.min(words.length,currentIndex+15)
+let start=Math.max(0,currentIndex-3)
+let end=Math.min(words.length,currentIndex+25)
 
 for(let i=start;i<end;i++){
 
@@ -187,6 +187,11 @@ e.preventDefault()
 
 typingBox.addEventListener("keyup",(e)=>{
 
+if(currentIndex >= words.length){
+finish()
+return
+}
+
 let typed=typingBox.value.trim()
 let currentWord=words[currentIndex]
 
@@ -230,7 +235,7 @@ let total=correct+wrong
 
 let accuracy= total>0 ? ((correct/total)*100).toFixed(2) : 0
 
-let minutes=(600-timeLeft)/60
+let minutes=(300-timeLeft)/60
 
 let wpm= minutes>0 ? Math.round(correct/minutes) : 0
 
@@ -256,5 +261,4 @@ alert("Typing Test Finished")
 </script>
 
 </body>
-
 </html>
